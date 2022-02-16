@@ -1,112 +1,95 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {useState, useEffect, useRef} from 'react';
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import Constants from 'expo-constants';
+import {Audio} from 'expo-av';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export default function App() {
+  const [status1, setStatus1] = useState();
+  const [status2, setStatus2] = useState();
+  const {current: sound} = useRef(new Audio.Sound());
+  const [currentStatus, setStatus] = useState();
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+  function customOnPlaybackStatusUpdate(status) {
+    if (status.isLoaded) {
+      setStatus(status);
+    }
+    console.log(
+      `Current position/Duration: ${status.positionMillis}/${status.durationMillis}`,
+    );
+  }
+
+  async function playSoundFromCloudinary() {
+    try {
+      if (currentStatus && currentStatus.isLoaded) {
+        console.log('Stopping sound...');
+        await sound.stopAsync();
+        console.log('unloading sound...');
+        await sound.unloadAsync();
+      }
+
+      console.log('loading audacity sound...');
+      await sound.loadAsync(
+        require('./assets/file_downloaded_from_cloudinary.mp3'),
+      );
+      sound.setProgressUpdateIntervalAsync(2000);
+      sound.setOnPlaybackStatusUpdate(customOnPlaybackStatusUpdate);
+      await sound.playAsync();
+      setStatus1(await sound.getStatusAsync());
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function playReencodedSound() {
+    try {
+      if (currentStatus && currentStatus.isLoaded) {
+        console.log('Stopping sound.');
+        await sound.stopAsync();
+        await sound.unloadAsync();
+      }
+
+      console.log('load audacity sound');
+      await sound.loadAsync(require('./assets/reencoded_by_audacity.mp3'));
+      sound.setProgressUpdateIntervalAsync(2000);
+      sound.setOnPlaybackStatusUpdate(customOnPlaybackStatusUpdate);
+      await sound.playAsync();
+      setStatus2(await sound.getStatusAsync());
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={playSoundFromCloudinary}>
+        <Text style={styles.buttonText}>Load track from cloudinary</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={playReencodedSound}>
+        <Text style={styles.buttonText}>Load reencoded track</Text>
+      </TouchableOpacity>
     </View>
   );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+}
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
+    padding: 8,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  button: {
+    margin: 10,
+    backgroundColor: '#000',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
-  sectionDescription: {
-    marginTop: 8,
+  buttonText: {
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
-
-export default App;
