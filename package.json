@@ -10,8 +10,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "expo": ">=44.0.0-0 <45.0.0",
-    "expo-av": "^10.2.1",
+    "expo": "next",
+    "expo-av": "^11.0.0",
     "expo-constants": "^13.0.2",
     "react": "17.0.1",
     "react-native": "0.64.3"
