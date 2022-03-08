@@ -3355,10 +3355,10 @@ expo-asset@~8.4.6:
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
 
-expo-av@^11.0.0:
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-11.0.0.tgz#1e00bfb0b709975eb0fb247d9f94501f6a80a40c"
-  integrity sha512-YccknarDY6RpIUu0idjQTSALlaO8Bt4YkK0v6te4yeUCTdiruFO5VVLIR4+kTmDMNsZ6p0Z2I/d58Pm2VH8MMA==
+expo-av@11.0.1:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-11.0.1.tgz#f142bbd72ea5ce8c19a81541df1015a6ff53df63"
+  integrity sha512-DQOnrDoFzcRVkrcE7VbMeDXLaGxWWA4kit0iLf9E57fgzwDsScCqUX0YeUaJHzYiT80VlyX0FHCYgvpR81UwqA==
   dependencies:
     "@expo/config-plugins" "^4.0.14"
 
